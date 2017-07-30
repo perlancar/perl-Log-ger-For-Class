@@ -66,7 +66,7 @@ sub _default_precall_logger {
             } else {
                 $cargs = "...";
             }
-            log_tracef("%s---> %s(%s)", $indent, $args->{name}, $cargs);
+            log_trace("%s---> %s(%s)", $indent, $args->{name}, $cargs);
         }
 
     }
