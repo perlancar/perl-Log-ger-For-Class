@@ -10,8 +10,8 @@ use experimental 'smartmatch';
 use Log::ger;
 
 use Data::Clean::JSON;
-use Package::MoreUtil qw(package_exists list_package_contents
-                         list_subpackages);
+use Package::Stash;
+use Package::Util::Lite qw(package_exists list_subpackages);
 use Sub::Uplevel;
 
 our %SPEC;
@@ -253,11 +253,11 @@ sub add_logging_to_package {
     my $_add = sub {
         my ($package) = @_;
 
-        my %contents = list_package_contents($package);
+        my $contents = Package::Stash->new($package)->get_all_symbols("CODE");
+
         my @syms;
-        for my $sym (keys %contents) {
-            my $sub = $contents{$sym};
-            next unless ref($sub) eq 'CODE';
+        for my $sym (sort keys %$contents) {
+            my $sub = $contents->{$sym};
 
             my $name = "${package}::$sym";
             if (ref($filter) eq 'CODE') {
