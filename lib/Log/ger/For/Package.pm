@@ -1,6 +1,8 @@
 package Log::ger::For::Package;
 
+# AUTHORITY
 # DATE
+# DIST
 # VERSION
 
 use 5.010;
@@ -9,14 +11,14 @@ use warnings;
 use experimental 'smartmatch';
 use Log::ger;
 
-use Data::Clean::JSON;
+use Data::Clean::ForJSON;
 use Package::Stash;
 use Package::Util::Lite qw(package_exists list_subpackages);
 use Sub::Uplevel;
 
 our %SPEC;
 
-my $cleanser = Data::Clean::JSON->new(-ref => ['stringify']);
+my $cleanser = Data::Clean::ForJSON->new(-ref => ['stringify']);
 my $import_hook_installed;
 
 sub import {
