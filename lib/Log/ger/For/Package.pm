@@ -22,17 +22,25 @@ my $import_hook_installed;
 sub import {
     my $class = shift;
 
-    my $hook;
+    my $import_hook = 1;
+    my $filter_subs;
     while (@_) {
         my $arg = shift;
-        if ($arg eq '-hook') {
-            $hook = shift;
+        if ($arg eq '-import_hook') {
+            $import_hook = shift;
+        } elsif ($arg eq '-filter_subs') {
+            $filter_subs = shift;
+            $filter_subs = qr/$1/ if $filter_subs =~ m!\A/(.*)/\z!;
         } elsif ($arg eq 'add_logging_to_package') {
             no strict 'refs';
             my @c = caller(0);
             *{"$c[0]::$arg"} = \&$arg;
         } else {
-            add_logging_to_package(packages=>[$arg], import_hook=>1);
+            add_logging_to_package(
+                packages => [$arg],
+                import_hook => $import_hook,
+                ($filter_subs ? (filter_subs => $filter_subs) : ()),
+            );
         }
     }
 }
@@ -385,6 +393,10 @@ see the logs, use e.g. Log::ger::Output::Screen in command-line:
   ---> Bar::nested()
   <--- Bar::nested()
  <--- Foo::func() = 'result'
+
+To log only certain functions:
+
+ % TRACE=1 perl -MLog::ger::Output=Screen -MFoo -MBar -MLog::ger::For::Package=-filter_subs,'/sub1|sub3/',Foo,Bar ...
 
 Use C<add_logging_to_package()> which gives more options, e.g. to add log to
 multiple packages specified by regex:
